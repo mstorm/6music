@@ -1,3 +1,4 @@
+const electron = require('electron');
 const {app, BrowserWindow} = require('electron');
 const path = require('path');
 
@@ -21,6 +22,8 @@ let mainWindow;
 
 function createWindow () {
   // Create the browser window.
+  const workArea = electron.screen.getPrimaryDisplay().workArea;
+
   const width = 380;
   const height = 665;
 
@@ -28,6 +31,8 @@ function createWindow () {
     show: false,
     width: width,
     height: height,
+    x: workArea.width - width,
+    y: 0,
     useContentSize: true,
     toolbar: false,
     resizeable: false,
