@@ -38,6 +38,7 @@ function createWindow () {
     useContentSize: true,
     toolbar: false,
     resizeable: false,
+    skipTaskbar: true,
     'web-preferences': {'plugins': true}
   });
 
@@ -84,6 +85,9 @@ function createWindow () {
 }
 
 app.setName(title);
+if (process.platform === 'darwin') {
+  app.dock.hide();
+}
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
