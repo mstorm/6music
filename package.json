@@ -8,7 +8,7 @@
     "url": "https://github.com/mstorm/6music.git"
   },
   "author": {
-  	"name": "Stephen Kwon",
+    "name": "Stephen Kwon",
     "email": "mstorm@mstorm.net",
     "url": "http://mstorm.net/"
   },
@@ -17,9 +17,8 @@
     "start": "electron .",
     "install": "electron-packager `pwd` --platform=darwin --arch=x64 --icon=./app/6music.icns --out ./out --overwrite --prune"
   },
-
   "devDependencies": {
-    "electron-packager": "^7.5.0",
-    "electron-prebuilt": "^1.2.0"
+    "electron-packager": ">=7.5.0",
+    "electron-prebuilt": ">=1.2.0"
   }
 }
