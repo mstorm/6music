@@ -1,6 +1,8 @@
 const electron = require('electron');
-const {app, BrowserWindow} = require('electron');
+const {app, BrowserWindow, Menu, Tray} = require('electron');
 const path = require('path');
+
+const title = 'BBC 6music';
 
 let pluginName
 switch (process.platform) {
@@ -18,7 +20,7 @@ switch (process.platform) {
 app.commandLine.appendSwitch('ppapi-flash-path', path.join(__dirname, pluginName));
 app.commandLine.appendSwitch('ppapi-flash-version', '18.0.0.203');
 
-let mainWindow;
+let mainWindow, tray;
 
 function createWindow () {
   // Create the browser window.
@@ -39,6 +41,27 @@ function createWindow () {
     'web-preferences': {'plugins': true}
   });
 
+  const contextMenu = Menu.buildFromTemplate([
+    {label: title, click: () => {
+      mainWindow.show();
+    }},
+    {type: 'separator'},
+    {role: 'quit'},
+  ]);
+
+  tray = new Tray(__dirname + '/app/tray.png');
+  tray.setToolTip(title);
+  tray.on('click', function() {
+    mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
+  });
+  tray.setContextMenu(contextMenu);
+  mainWindow.on('show', () => {
+    tray.setHighlightMode('selection');
+  });
+  mainWindow.on('hide', () => {
+    tray.setHighlightMode('never');
+  });
+
   // and load the index.html of the app.
   var url = 'file://' + __dirname + '/app/index.html';
   //url = 'http://www.mstorm.net/toy/user-agent';
@@ -49,22 +72,28 @@ function createWindow () {
   });
 
   // Emitted when the window is closed.
-  mainWindow.on('closed', function () {
+  mainWindow.on('close', function (e) {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
-    mainWindow = null
-    app.quit()
+    // mainWindow = null;
+    // app.quit()
+    e.preventDefault();
+    mainWindow.hide();
   })
-};
+}
 
-app.setName("BBC 6music");
+app.setName(title);
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', createWindow);
 
+app.on('before-quit', e => {
+  mainWindow.removeAllListeners('close');
+  mainWindow = null;
+});
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
   // On OS X it is common for applications and their menu bar
